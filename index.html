@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f3f5f7">
+<title>ДДС — Щербакова, 120</title>
+<style>
+:root{--bg:#f3f5f7;--card:#fff;--ink:#17212d;--muted:#7c8794;--line:#e5e9ee;--green:#e8f7ef;--pink:#fdebed;--blue:#eaf0ff;--amber:#fff4dd}
+*{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+button,select{font:inherit} .app{max-width:430px;margin:0 auto;min-height:100vh;padding:10px 14px 78px}
+.header{display:flex;align-items:end;gap:8px;margin:6px 0 10px} .brand{flex:1;min-width:0}
+h1{font-size:34px;line-height:.95;margin:0 0 6px;font-weight:800;letter-spacing:-1.6px} .sub{font-size:13px;line-height:1.15;color:var(--muted)}
+.filters{display:flex;gap:7px;flex:0 0 auto} label{display:block;font-size:10px;color:var(--muted);margin:0 0 4px 8px}
+select{appearance:none;-webkit-appearance:none;background:#fff;border:1px solid var(--line);border-radius:14px;height:42px;padding:0 30px 0 13px;font-size:16px;font-weight:700;color:var(--ink);background-image:linear-gradient(45deg,transparent 50%,#111 50%),linear-gradient(135deg,#111 50%,transparent 50%);background-position:calc(100% - 17px) 18px,calc(100% - 12px) 18px;background-size:6px 6px,6px 6px;background-repeat:no-repeat}
+#year,#year2{width:102px} #month,#month2{width:124px}
+.screen{display:none} .screen.active{display:block}
+.card{background:var(--card);border-radius:24px;margin:7px 0;padding:13px 14px;box-shadow:0 7px 24px rgba(20,30,40,.06)}
+.card-title{font-size:18px;font-weight:800;text-align:center;margin:0 0 7px}
+.gauge{width:190px;height:190px;margin:0 auto 8px;border-radius:50%;background:conic-gradient(#263442 var(--pct),#edf0f2 0);position:relative;box-shadow:inset 0 0 0 14px #f0f2f4,0 10px 24px rgba(25,35,45,.10)}
+.gauge:before{content:"";position:absolute;inset:20px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fff,#f4f6f8 65%,#e4e8ec);box-shadow:inset 0 7px 16px rgba(255,255,255,.9),inset 0 -9px 16px rgba(40,50,60,.08)}
+.gauge:after{content:"";position:absolute;inset:11px;border-radius:50%;border:7px solid rgba(255,255,255,.92);box-shadow:0 5px 8px rgba(20,30,40,.08)}
+.gauge-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:2}
+.pct{font-size:38px;font-weight:850;letter-spacing:-2px} .actual{font-size:16px;font-weight:800;margin-top:2px} .small{font-size:12px;color:var(--muted);margin-top:2px}
+.divider{height:1px;background:var(--line);margin:8px 0} .planrow{display:flex;justify-content:space-between;gap:14px} .planrow>div{flex:1} .planrow>div:last-child{text-align:right} .big{font-size:20px;font-weight:800}
+.dds-head{display:flex;justify-content:space-between;align-items:center;gap:8px} .dds-title{font-size:18px;font-weight:800;margin:0 0 7px} .badge{display:inline-block;background:#edf2f6;border-radius:14px;padding:6px 9px;color:#687482;font-weight:700;font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px} .metric{border-radius:19px;padding:13px 12px;min-height:112px}
+.metric h3{font-size:14px;font-weight:500;color:#687482;margin:0 0 10px} .metric .value{font-size:24px;font-weight:800;letter-spacing:-.8px} .metric p{font-size:12px;color:#7b8793;margin:5px 0 0}
+.green{background:var(--green)} .pink{background:var(--pink)} .blue{background:var(--blue)} .amber{background:var(--amber)}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(430px,100%);height:64px;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;z-index:20}
+.nav button{border:0;background:none;font-size:14px;color:#7d8792;font-weight:500;padding:5px 28px} .nav .active{color:#17212d;font-weight:800}
+.section-title{font-size:19px;font-weight:800;margin:2px 0 6px} .section-sub{font-size:12px;color:var(--muted);margin-bottom:9px}
+.segment{display:flex;background:#eef2f5;border-radius:13px;padding:3px;margin-bottom:10px} .segment button{flex:1;border:0;border-radius:10px;padding:8px 4px;background:transparent;color:#6f7b87;font-size:12px;font-weight:700} .segment button.active{background:#263442;color:#fff}
+.conversion-card{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff1e8;border:1px solid #f2d9ca;border-radius:18px;padding:12px 13px;margin:0 0 12px}.conversion-title{font-size:14px;font-weight:800}.conversion-sub{font-size:10px;color:#8a776d;margin-top:3px}.conversion-value{font-size:16px;font-weight:850;white-space:nowrap}
+.total-expense{font-size:22px;font-weight:800;margin-bottom:9px} .expense-row{display:flex;align-items:center;gap:9px;width:100%;border:0;background:#fff;text-align:left;padding:10px 0;border-bottom:1px solid #eef1f3}
+.dot{width:8px;height:8px;border-radius:50%;background:#5f7182;flex:0 0 auto} .row-main{flex:1;min-width:0} .row-name{font-size:13px;font-weight:700;line-height:1.2} .row-meta{font-size:10px;color:var(--muted);margin-top:3px} .row-value{font-size:13px;font-weight:800;white-space:nowrap} .chev{font-size:17px;color:#9aa4ad}
+.back{border:0;background:#edf2f6;border-radius:13px;padding:8px 11px;font-size:12px;font-weight:700;color:#5f6c78;margin-bottom:9px} .detail-title{font-size:20px;font-weight:800;margin:0 0 3px} .detail-total{font-size:12px;color:var(--muted);margin-bottom:9px}
+.hidden{display:none!important} .chart{height:170px;display:flex;align-items:end;gap:7px;padding:10px 2px 20px;border-top:1px solid var(--line)} .bar-wrap{height:140px;flex:1;display:flex;flex-direction:column;justify-content:end;align-items:center;gap:4px} .bar{width:100%;max-width:28px;border-radius:7px 7px 3px 3px;background:#8fb8a4;min-height:2px} .bar-value,.bar-label{font-size:9px;color:#65727e;white-space:nowrap}
+.source-note{font-size:10px;color:#9aa4ad;text-align:center;margin:8px 0 0}
+@media(max-width:370px){.app{padding-left:11px;padding-right:11px}#year,#year2{width:98px}#month,#month2{width:118px}.filters{gap:5px}.metric{min-height:105px}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div id="homeScreen" class="screen active">
+<div class="header">
+  <div class="brand"><h1>ДДС</h1><div class="sub">Щербакова, 120 ·<br>управление деньгами</div></div>
+  <div class="filters">
+    <div><label for="year">Год</label><select id="year"><option value="2026">2026</option></select></div>
+    <div><label for="month">Месяц</label><select id="month"></select></div>
+  </div>
+</div>
+
+<section class="card">
+<h2 class="card-title">Фактическая выручка</h2>
+<div class="gauge" id="gauge"><div class="gauge-content"><div class="pct" id="pct">0%</div><div class="actual" id="rev">0 ₽</div><div class="small">с начала проекта</div></div></div>
+<div class="divider"></div>
+<div class="planrow">
+  <div><div class="big">325,0 млн ₽</div><div class="small">План на весь период</div></div>
+  <div><div class="big" id="factDate">0 ₽</div><div class="small">Факт на дату</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="dds-head"><h2 class="dds-title">ДДС на выбранную дату</h2><span class="badge" id="periodBadge">—</span></div>
+<div class="grid">
+  <div class="metric green"><h3>Поступления</h3><div class="value" id="inflow">0 ₽</div><p>накопительно</p></div>
+  <div class="metric pink"><h3>Выплаты</h3><div class="value" id="outflow">0 ₽</div><p>накопительно</p></div>
+  <div class="metric blue"><h3>Чистый денежный поток</h3><div class="value" id="net">0 ₽</div><p>Поступления − Выплаты</p></div>
+  <div class="metric amber"><h3>Остаток денег</h3><div class="value" id="balance">0 ₽</div><p>на выбранную дату</p></div>
+</div>
+</section>
+<p class="source-note">Данные загружены из Финансовая_модель_Щербакова.xlsm</p>
+</div>
+
+<div id="expenseScreen" class="screen">
+<div class="header">
+  <div class="brand"><h1>Расходы</h1><div class="sub">Щербакова, 120 ·<br>управление расходами</div></div>
+  <div class="filters">
+    <div><label for="year2">Год</label><select id="year2"><option value="2026">2026</option></select></div>
+    <div><label for="month2">Месяц</label><select id="month2"></select></div>
+  </div>
+</div>
+
+<section class="card" id="categoriesCard">
+<div class="segment"><button id="accBtn" class="active">Накопительно</button><button id="monthBtn">Только месяц</button></div>
+<div class="conversion-card">
+  <div><div class="conversion-title">Конвертация</div><div class="conversion-sub"></div></div>
+  <div class="conversion-value" id="conversionValue">0 ₽</div>
+</div>
+<div class="section-title">Структура расходов</div><div class="section-sub" id="expensePeriod"></div>
+<div class="total-expense" id="expenseTotal">0 ₽</div><div id="categoryList"></div>
+</section>
+
+<section class="card hidden" id="articleScreen">
+<button class="back" id="backCategories">← Все категории</button>
+<div class="detail-title" id="articleCategory"></div><div class="detail-total" id="articleCategoryTotal"></div><div id="articleList"></div>
+</section>
+
+<section class="card hidden" id="monthDetailScreen">
+<button class="back" id="backArticles">← Статьи</button>
+<div class="detail-title" id="selectedArticle"></div><div class="detail-total" id="selectedArticleTotal"></div><div class="chart" id="articleChart"></div>
+</section>
+</div>
+</div>
+
+<nav class="nav"><button id="homeBtn" class="active">⌂<br>Главная</button><button id="expensesBtn">▥<br>Расходы</button></nav>
+
+<script>
+const DATA = {"planRevenue": 325000000, "months": [{"m": 4, "label": "Апрель"}, {"m": 5, "label": "Май"}, {"m": 6, "label": "Июнь"}, {"m": 7, "label": "Июль"}, {"m": 8, "label": "Август"}, {"m": 9, "label": "Сентябрь"}], "revenue": {"4": 0.0, "5": 0.0, "6": 28260870.0, "7": 14130435.0, "8": 14130435.0, "9": 14130435.0}, "dds": {"4": {"opening": 33754596.0, "inflow": 293353.4199999999, "outflow": 12205267.59, "balance": 21842681.830000002}, "5": {"opening": 21842681.830000002, "inflow": 137284.94, "outflow": 10775913.499999998, "balance": 11204053.270000005}, "6": {"opening": 11204053.270000005, "inflow": 28513191.44, "outflow": 12259613.489999998, "balance": 27457631.22000001}, "7": {"opening": 27457631.22000001, "inflow": 20785181.509999998, "outflow": 18907526.619999997, "balance": 29335286.110000007}, "8": {"opening": 29335286.110000007, "inflow": 14264302.52, "outflow": 13894291.180000002, "balance": 29705297.45000001}, "9": {"opening": 29705297.45000001, "inflow": 14210051.4, "outflow": 16925657.26, "balance": 26989691.590000007}}, "expenses": {"Расчеты с персоналом": {"total": 25769287.059999987, "articles": {"Заработная плата": {"total": 14622803.900000002, "months": {"6": 2188528.21, "5": 1400368.49, "4": 3796458.9500000007, "7": 2813327.149999999, "8": 2272436.5400000005, "9": 2151684.56}}, "Аванс по заработной плате": {"total": 9865045.57, "months": {"6": 1803708.6400000001, "5": 1591584.49, "4": 831876.1699999999, "7": 1984794.99, "8": 1657515.75, "9": 1995565.53}}, "Прочие выплаты персоналу": {"total": 829191.6599999999, "months": {"6": 292401.72, "5": 334733.0, "4": 145834.53999999998, "7": 37572.4, "8": 8000.0, "9": 10650.0}}, "Отпускные": {"total": 452245.93000000005, "months": {"6": 162781.76, "4": 289464.17000000004}}}}, "Финансовые расходы": {"total": 18210679.66, "articles": {"Конвертация": {"total": 18059061.91, "months": {"6": 1869982.8, "5": 1482542.61, "4": 2810822.5, "7": 5366444.0, "8": 2592612.0, "9": 3936658.0}}, "Банковское обслуживание": {"total": 151617.75000000003, "months": {"6": 19975.949999999997, "5": 19078.180000000004, "4": 19020.79, "7": 28724.370000000003, "8": 27443.249999999996, "9": 37375.21000000001}}}}, "Расчеты с бюджетом": {"total": 17029497.83, "articles": {"Страховые взносы": {"total": 8016741.829999998, "months": {"6": 1382612.73, "5": 1386484.46, "4": 665457.8200000001, "7": 1628036.81, "8": 1505520.03, "9": 1448629.98}}, "НДС": {"total": 5337373.0, "months": {"7": 1779125.0, "8": 1779124.0, "9": 1779124.0}}, "НДФЛ": {"total": 3399587.0, "months": {"6": 633676.0, "5": 342933.0, "4": 509449.0, "7": 685669.0, "8": 628294.0, "9": 599566.0}}, "Налог на прибыль": {"total": 270399.0, "months": {"6": 17881.0, "5": 17881.0, "4": 71527.0, "7": 163110.0}}, "Прочие налоги и сборы": {"total": 5397.0, "months": {"4": 5397.0}}}}, "Содержание строительной площадки": {"total": 11073717.08, "articles": {"Вывоз строительного мусора": {"total": 3076800.0, "months": {"6": 384000.0, "7": 939000.0, "8": 907200.0, "9": 846600.0}}, "Охрана строительной площадки": {"total": 2202400.0, "months": {"6": 878400.0, "7": 878000.0, "9": 446000.0}}, "Содержание временных зданий и сооружений": {"total": 1863731.25, "months": {"6": 550000.0, "5": 550000.0, "4": 550000.0, "7": 213731.25}}, "Освещение строительной площадки": {"total": 1377399.8299999998, "months": {"6": 13944.08, "5": 1349403.1500000001, "7": 14052.6}}, "Клининг строительной площадки": {"total": 1296700.0, "months": {"6": 133900.0, "5": 50000.0, "7": 345800.0, "8": 373100.0, "9": 393900.0}}, "Обслуживание системы видеонаблюдения": {"total": 880284.0, "months": {"6": 100000.0, "5": 572144.0, "7": 208140.0}}, "Обслуживание биотуалетов": {"total": 290300.0, "months": {"6": 45900.0, "7": 84150.0, "8": 71000.0, "9": 89250.0}}, "Содержание бытового городка": {"total": 59042.0, "months": {"5": 59042.0}}, "Питьевая вода для строительной площадки": {"total": 27060.0, "months": {"6": 7160.0, "7": 9630.0, "8": 4490.0, "9": 5780.0}}}}, "Административное обеспечение объекта": {"total": 6294824.62, "articles": {"Аренда офиса": {"total": 1747600.0, "months": {"6": 500000.0, "5": 236900.0, "4": 300000.0, "9": 710700.0}}, "Представительские расходы": {"total": 1331659.0, "months": {"6": 476999.0, "7": 185000.0, "8": 669660.0}}, "Охрана офиса": {"total": 459000.0, "months": {"6": 93000.0, "5": 90000.0, "7": 183000.0, "9": 93000.0}}, "Клининг офиса": {"total": 425246.7100000001, "months": {"6": 121499.06, "5": 60749.53, "4": 60749.53, "7": 60749.53, "8": 60749.53, "9": 60749.53}}, "Обслуживание оргтехники": {"total": 410686.0, "months": {"6": 53300.0, "5": 62300.0, "4": 20350.0, "7": 44300.0, "8": 164646.0, "9": 65790.0}}, "Коммунальные услуги офиса": {"total": 401051.69999999995, "months": {"9": 401051.69999999995}}, "Хозяйственные товары для офиса": {"total": 315558.13, "months": {"6": 11381.18, "5": 14302.27, "4": 26819.0, "7": 126506.40999999999, "8": 113005.78, "9": 23543.489999999998}}, "Информационные технологии (ПО, сопровождение, информационная безопасность)": {"total": 302680.0, "months": {"6": 17400.0, "4": 105980.0, "7": 21000.0, "8": 156000.0, "9": 2300.0}}, "Аренда производственной площадки": {"total": 260269.09, "months": {"5": 50132.06, "4": 60019.34, "7": 100117.69, "8": 50000.0}}, "Подбор персонала": {"total": 207156.0, "months": {"4": 103578.0, "7": 103578.0}}, "Канцелярские товары": {"total": 164793.93, "months": {"6": 33918.71, "5": 7340.25, "4": 30809.949999999997, "7": 750.0, "8": 77457.1, "9": 14517.92}}, "Услуги связи": {"total": 78268.13, "months": {"6": 12527.65, "5": 13132.369999999999, "4": 12321.49, "7": 12972.740000000002, "8": 13426.64, "9": 13887.24}}, "Аренда парковки": {"total": 68880.0, "months": {"4": 31500.0, "7": 37380.0}}, "Питьевая вода для офиса": {"total": 61970.0, "months": {"6": 4760.0, "5": 13640.0, "4": 17470.0, "7": 10010.0, "8": 7820.0, "9": 8270.0}}, "Командировочные расходы": {"total": 58802.93, "months": {"7": 58802.93}}, "Почтовые и курьерские услуги": {"total": 1203.0, "months": {"5": 1203.0}}}}, "Обеспечение строительного производства": {"total": 2421445.6600000006, "articles": {"Взносы СРО": {"total": 634166.0, "months": {"5": 511666.0, "4": 112500.0, "7": 10000.0}}, "Материалы для содержания строительной площадки": {"total": 578695.1200000001, "months": {"6": 43326.0, "5": 15471.34, "4": 326519.21, "7": 158549.57, "8": 30629.0, "9": 4200.0}}, "Приобретение оборудования": {"total": 369375.74, "months": {"4": 309999.0, "8": 59376.740000000005}}, "Охрана труда": {"total": 268258.2, "months": {"6": 32503.0, "5": 47144.6, "4": 148900.0, "7": 25410.6, "9": 14300.0}}, "Спецодежда и средства индивидуальной защиты": {"total": 240877.5, "months": {"6": 49286.0, "4": 150489.5, "7": 15091.0, "8": 26011.0}}, "Лабораторные испытания (геодезия)": {"total": 185440.0, "months": {"8": 185440.0}}, "Предрейсовые медицинские осмотры": {"total": 67000.0, "months": {"6": 10500.0, "5": 36500.0, "4": 5000.0, "7": 5000.0, "8": 5000.0, "9": 5000.0}}, "Ремонт оборудования": {"total": 56750.0, "months": {"7": 56750.0}}, "Расходные материалы для оборудования": {"total": 9523.1, "months": {"4": 2520.0, "7": 5048.0, "8": 1955.1}}, "Поверка и калибровка оборудования": {"total": 6000.0, "months": {"6": 6000.0}}, "Промышленная безопасность": {"total": 5360.0, "months": {"6": 5360.0}}}}, "Юридическое обеспечение": {"total": 1722741.0, "articles": {"Юридические услуги": {"total": 1465000.0, "months": {"6": 253000.0, "5": 253000.0, "4": 225500.0, "7": 253000.0, "8": 243000.0, "9": 237500.0}}, "Государственные пошлины": {"total": 150421.0, "months": {"5": 10000.0, "4": 1062.0, "8": 10000.0, "9": 129359.0}}, "Судебные расходы": {"total": 107320.0, "months": {"4": 107320.0}}}}, "Прочие расходы": {"total": 1305359.05, "articles": {"Выплата аванса подрядчикам": {"total": 1212931.32, "months": {"6": 0.0, "8": 0.0, "9": 1212931.32}}, "Прочие текущие расходы": {"total": 84327.73, "months": {"4": 84327.73}}, "Штрафы и пени (управленческий учет)": {"total": 8100.0, "months": {"7": 2812.5, "8": 5287.5}}}}, "Транспортное обеспечение": {"total": 1140717.68, "articles": {"Топливо": {"total": 460000.0, "months": {"6": 50000.0, "5": 100000.0, "4": 100000.0, "7": 70000.0, "8": 30000.0, "9": 110000.0}}, "Такси и служебные поездки": {"total": 404727.68000000005, "months": {"5": 70802.7, "4": 31469.9, "7": 170390.08000000002, "8": 54291.22, "9": 77773.78}}, "Аренда транспорта": {"total": 228700.0, "months": {"4": 112900.0, "7": 12000.0, "8": 103800.0}}, "Техническое обслуживание транспорта": {"total": 47290.0, "months": {"5": 25435.0, "4": 21855.0}}}}}};
+const monthNames = Object.fromEntries(DATA.months.map(x => [x.m, x.label]));
+const monthEl = document.getElementById("month");
+const month2El = document.getElementById("month2");
+const yearEl = document.getElementById("year");
+const year2El = document.getElementById("year2");
+
+for (const el of [monthEl, month2El]) {
+  DATA.months.forEach(x => {
+    const opt = document.createElement("option");
+    opt.value = String(x.m);
+    opt.textContent = x.label;
+    el.appendChild(opt);
+  });
+}
+monthEl.value = "9";
+month2El.value = "9";
+
+const fmtM = n => new Intl.NumberFormat("ru-RU", {maximumFractionDigits:1}).format(n/1e6) + " млн ₽";
+const fmtBalance = n => new Intl.NumberFormat("ru-RU", {minimumFractionDigits:2, maximumFractionDigits:2}).format(n/1e6) + " млн ₽";
+
+function cumulative(obj, m) {
+  let s = 0;
+  for (let i=4; i<=m; i++) s += Number(obj[i] || 0);
+  return s;
+}
+
+function updateHome() {
+  const m = Number(monthEl.value);
+  const rev = cumulative(DATA.revenue, m);
+  const inflow = cumulative(Object.fromEntries(Object.entries(DATA.dds).map(([k,v])=>[k,v.inflow])), m);
+  const outflow = cumulative(Object.fromEntries(Object.entries(DATA.dds).map(([k,v])=>[k,v.outflow])), m);
+  const balance = DATA.dds[m].balance;
+  const pct = Math.min(100, rev / DATA.planRevenue * 100);
+
+  document.getElementById("pct").textContent = pct.toLocaleString("ru-RU", {maximumFractionDigits:1}) + "%";
+  document.getElementById("rev").textContent = fmtM(rev);
+  document.getElementById("factDate").textContent = fmtM(rev);
+  document.getElementById("gauge").style.setProperty("--pct", pct + "%");
+  document.getElementById("inflow").textContent = fmtM(inflow);
+  document.getElementById("outflow").textContent = "−" + fmtM(outflow);
+  document.getElementById("net").textContent = fmtM(inflow - outflow);
+  document.getElementById("balance").textContent = fmtBalance(balance);
+  document.getElementById("periodBadge").textContent = monthNames[m] + " 2026";
+  month2El.value = String(m);
+  renderCategories();
+}
+
+let expenseMode = "acc";
+let currentCategory = null;
+let currentArticle = null;
+function categoryValue(cat, m) {
+  let s = 0;
+  if (expenseMode === "month") {
+    for (const a of Object.values(DATA.expenses[cat].articles)) s += Number(a.months[m] || 0);
+    return s;
+  }
+  for (const a of Object.values(DATA.expenses[cat].articles)) {
+    for (let i = 4; i <= m; i++) s += Number(a.months[i] || 0);
+  }
+  return s;
+}
+function articleValue(a, m) {
+  if (expenseMode === "month") return Number(a.months[m] || 0);
+  let s = 0;
+  for (let i=4; i<=m; i++) s += Number(a.months[i] || 0);
+  return s;
+}
+function renderConversion() {
+  const m = Number(month2El.value);
+  const obj = DATA.expenses["Финансовые расходы"];
+  const article = obj && obj.articles ? obj.articles["Конвертация"] : null;
+  let value = 0;
+  if (article) {
+    if (expenseMode === "month") value = Number(article.months[m] || 0);
+    else for (let i = 4; i <= m; i++) value += Number(article.months[i] || 0);
+  }
+  document.getElementById("conversionValue").textContent = fmtM(value);
+}
+function renderCategories() {
+  const m = Number(month2El.value);
+  renderConversion();
+  const list = document.getElementById("categoryList");
+  let total = 0;
+  for (const cat in DATA.expenses) total += categoryValue(cat, m);
+  document.getElementById("expenseTotal").textContent = fmtM(total);
+  document.getElementById("expensePeriod").textContent = expenseMode === "acc"
+    ? "Апрель–" + monthNames[m] + " 2026" : monthNames[m] + " 2026";
+  list.innerHTML = "";
+  for (const [cat, obj] of Object.entries(DATA.expenses)) {
+    const row = document.createElement("button");
+    row.className = "expense-row";
+    row.innerHTML = `<span class="dot"></span><span class="row-main"><span class="row-name">${cat}</span></span><span class="row-value">${fmtM(categoryValue(cat,m))}</span><span class="chev">›</span>`;
+    row.onclick = () => openCategory(cat);
+    list.appendChild(row);
+  }
+}
+function openCategory(cat) {
+  currentCategory = cat;
+  currentArticle = null;
+  document.getElementById("categoriesCard").classList.add("hidden");
+  document.getElementById("articleScreen").classList.remove("hidden");
+  document.getElementById("articleCategory").textContent = cat;
+  document.getElementById("articleCategoryTotal").textContent = fmtM(categoryValue(cat, Number(month2El.value)));
+  const list = document.getElementById("articleList");
+  list.innerHTML = "";
+  for (const [art, obj] of Object.entries(DATA.expenses[cat].articles)) {
+    const row = document.createElement("button");
+    row.className = "expense-row";
+    row.innerHTML = `<span class="dot"></span><span class="row-main"><span class="row-name">${art}</span></span><span class="row-value">${fmtM(articleValue(obj,Number(month2El.value)))}</span><span class="chev">›</span>`;
+    row.onclick = () => openArticle(art, obj);
+    list.appendChild(row);
+  }
+}
+function openArticle(art, obj) {
+  currentArticle = art;
+  document.getElementById("articleScreen").classList.add("hidden");
+  document.getElementById("monthDetailScreen").classList.remove("hidden");
+  document.getElementById("selectedArticle").textContent = art;
+  document.getElementById("selectedArticleTotal").textContent = fmtM(articleValue(obj, Number(month2El.value)));
+  const chart = document.getElementById("articleChart");
+  chart.innerHTML = "";
+  const m = Number(month2El.value);
+  const vals = [];
+  for (let i=4; i<=m; i++) vals.push([i, Number(obj.months[i] || 0)]);
+  const max = Math.max(...vals.map(x=>x[1]), 1);
+  for (const [mm,v] of vals) {
+    const w = document.createElement("div");
+    w.className = "bar-wrap";
+    w.innerHTML = `<div class="bar-value">${v ? new Intl.NumberFormat("ru-RU",{maximumFractionDigits:1}).format(v/1e6) : "0"}</div><div class="bar" style="height:${Math.max(2,v/max*115)}px"></div><div class="bar-label">${monthNames[mm].slice(0,3)}</div>`;
+    chart.appendChild(w);
+  }
+}
+function resetDetails() {
+  document.getElementById("articleScreen").classList.add("hidden");
+  document.getElementById("monthDetailScreen").classList.add("hidden");
+  document.getElementById("categoriesCard").classList.remove("hidden");
+}
+document.getElementById("backCategories").onclick = resetDetails;
+document.getElementById("backArticles").onclick = () => {
+  document.getElementById("monthDetailScreen").classList.add("hidden");
+  document.getElementById("articleScreen").classList.remove("hidden");
+};
+document.getElementById("accBtn").onclick = () => {
+  expenseMode="acc"; document.getElementById("accBtn").classList.add("active"); document.getElementById("monthBtn").classList.remove("active");
+  resetDetails(); currentCategory=null; currentArticle=null; renderCategories();
+};
+document.getElementById("monthBtn").onclick = () => {
+  expenseMode="month"; document.getElementById("monthBtn").classList.add("active"); document.getElementById("accBtn").classList.remove("active");
+  resetDetails(); currentCategory=null; currentArticle=null; renderCategories();
+};
+monthEl.addEventListener("change", () => { month2El.value=monthEl.value; updateHome(); });
+month2El.addEventListener("change", () => {
+  monthEl.value=month2El.value;
+  updateHome();
+  renderCategories();
+  if (currentCategory) {
+    const wasArticleOpen = !document.getElementById("articleScreen").classList.contains("hidden");
+    const wasDetailOpen = !document.getElementById("monthDetailScreen").classList.contains("hidden");
+    openCategory(currentCategory);
+    if (wasDetailOpen && currentArticle && DATA.expenses[currentCategory] && DATA.expenses[currentCategory].articles[currentArticle]) {
+      openArticle(currentArticle, DATA.expenses[currentCategory].articles[currentArticle]);
+    }
+  }
+});
+document.getElementById("homeBtn").onclick = () => {
+  document.getElementById("homeScreen").classList.add("active");
+  document.getElementById("expenseScreen").classList.remove("active");
+  document.getElementById("homeBtn").classList.add("active");
+  document.getElementById("expensesBtn").classList.remove("active");
+};
+document.getElementById("expensesBtn").onclick = () => {
+  document.getElementById("homeScreen").classList.remove("active");
+  document.getElementById("expenseScreen").classList.add("active");
+  document.getElementById("expensesBtn").classList.add("active");
+  document.getElementById("homeBtn").classList.remove("active");
+  renderCategories();
+};
+updateHome();
+</script>
+</body>
+</html>
